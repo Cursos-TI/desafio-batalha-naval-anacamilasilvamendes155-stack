@@ -1,40 +1,89 @@
 #include <stdio.h>
 
-// Desafio Batalha Naval - MateCheck
-// Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
-// Siga os comentários para implementar cada parte do desafio.
+#define TAM_TAB 10
+#define NAVIO 3
+#define HABILIDADE 5
 
 int main() {
-    // Nível Novato - Posicionamento dos Navios
-    // Sugestão: Declare uma matriz bidimensional para representar o tabuleiro (Ex: int tabuleiro[5][5];).
-    // Sugestão: Posicione dois navios no tabuleiro, um verticalmente e outro horizontalmente.
-    // Sugestão: Utilize `printf` para exibir as coordenadas de cada parte dos navios.
 
-    // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
-    // Sugestão: Expanda o tabuleiro para uma matriz 10x10.
-    // Sugestão: Posicione quatro navios no tabuleiro, incluindo dois na diagonal.
-    // Sugestão: Exiba o tabuleiro completo no console, mostrando 0 para posições vazias e 3 para posições ocupadas.
+    int tabuleiro[TAM_TAB][TAM_TAB] = {0}; 
 
-    // Nível Mestre - Habilidades Especiais com Matrizes
-    // Sugestão: Crie matrizes para representar habilidades especiais como cone, cruz, e octaedro.
-    // Sugestão: Utilize estruturas de repetição aninhadas para preencher as áreas afetadas por essas habilidades no tabuleiro.
-    // Sugestão: Exiba o tabuleiro com as áreas afetadas, utilizando 0 para áreas não afetadas e 1 para áreas atingidas.
+    tabuleiro[0][0] = NAVIO;
+    tabuleiro[0][1] = NAVIO;
+    tabuleiro[0][2] = NAVIO;
 
-    // Exemplos de exibição das habilidades:
-    // Exemplo para habilidade em cone:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 1 1 1 1 1
-    
-    // Exemplo para habilidade em octaedro:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 0 0 1 0 0
+    tabuleiro[2][5] = NAVIO;
+    tabuleiro[3][5] = NAVIO;
+    tabuleiro[4][5] = NAVIO;
 
-    // Exemplo para habilidade em cruz:
-    // 0 0 1 0 0
-    // 1 1 1 1 1
-    // 0 0 1 0 0
+    tabuleiro[6][0] = NAVIO;
+    tabuleiro[7][1] = NAVIO;
+    tabuleiro[8][2] = NAVIO;
+
+    tabuleiro[9][7] = NAVIO;
+    tabuleiro[8][8] = NAVIO;
+    tabuleiro[7][9] = NAVIO;
+
+
+    int cone[5][5] = {0};  
+    int cruz[5][5] = {0};    
+    int octaedro[5][5] = {0};
+
+    for (int i = 0; i < 5; i++) {
+        for (int j = 2 - i; j <= 2 + i; j++) {
+            if (j >=0 && j < 5) {
+                cone[i][j] = 1;
+            }
+        }
+    }
+
+    for (int i = 0; i < 5; i++) {
+        cruz[2][i] = 1; 
+        cruz[i][2] = 1; 
+    }
+
+    for (int i = 0; i < 5; i++) {
+        int start = (i <= 2) ? 2 - i : i - 2;
+        int end   = (i <= 2) ? 2 + i : 6 - i;
+        for (int j = start; j <= end; j++) {
+            octaedro[i][j] = 1;
+        }
+    }
+
+    int origConeLinha = 0, origConeColuna = 5;  
+    int origCruzLinha = 5, origCruzColuna = 2;   
+    int origOctLinha = 7, origOctColuna = 7;     
+
+    void aplicarHabilidade(int matriz[5][5], int linOrig, int colOrig) {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (matriz[i][j] == 1) {
+                    int linTab = linOrig + i - 2; 
+                    int colTab = colOrig + j - 2;
+                    if (linTab >= 0 && linTab < TAM_TAB && colTab >= 0 && colTab < TAM_TAB) {
+                        if (tabuleiro[linTab][colTab] == 0) 
+                            tabuleiro[linTab][colTab] = HABILIDADE;
+                    }
+                }
+            }
+        }
+    }
+
+    aplicarHabilidade(cone, origConeLinha, origConeColuna);
+    aplicarHabilidade(cruz, origCruzLinha, origCruzColuna);
+    aplicarHabilidade(octaedro, origOctLinha, origOctColuna);
+
+    printf("=== Tabuleiro com Habilidades ===\n\n");
+    for (int i = 0; i < TAM_TAB; i++) {
+        for (int j = 0; j < TAM_TAB; j++) {
+            if (tabuleiro[i][j] == 0) printf("~ ");      // água
+            else if (tabuleiro[i][j] == NAVIO) printf("N "); // navio
+            else if (tabuleiro[i][j] == HABILIDADE) printf("H "); 
+        }
+        printf("\n");
+    }
+
+    printf("\nLegenda: ~ = agua, N = navio, H = area de habilidade\n");
 
     return 0;
 }
